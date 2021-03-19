@@ -1,8 +1,13 @@
 import createPlayerAnims from '../anims/player-anims.js';
 
 export default class Level1 extends Phaser.Scene {
-  background;
   player;
+  playerSpeed = 600;
+  pond;
+  signs;
+  blank_blockers;
+  vendingMachine1;
+  vendingMachine2;
   // platforms;
   // stars;
   // bombs;
@@ -17,57 +22,52 @@ export default class Level1 extends Phaser.Scene {
   preload() {}
 
   create() {
-
     //  Set the camera and physics bounds to be the size of 4x4 bg images
     this.cameras.main.setBounds(0, 0, 2308, 1478);
     this.physics.world.setBounds(0, 0, 2308, 1478);
 
-    //  Background
-    this.add.image(0, 0, 'map-background').setOrigin(0);
-
     // Gradient Background
-    let graphics = this.add.graphics();
+    let gradientBackground = this.add.graphics();
+    gradientBackground.fillGradientStyle(
+      0xbfab78,
+      0xbfab78,
+      0xa79567,
+      0xa79567,
+      1
+    );
+    gradientBackground.fillRect(0, 0, 2308, 1478);
 
-    graphics.fillGradientStyle(0xbfab78, 0xbfab78, 0xa79567, 0xa79567, 1);
-    graphics.fillRect(0, 0, 2308, 1478);
+    //  Background
+    // this.add.image(0, 0, 'map-background').setOrigin(0);
 
-    // Polygon
-    let polygon = new Phaser.Geom.Polygon([
-      600,
-      100,
-      900,
-      100,
-      900,
-      500,
-      600,
-      500,
-    ]);
+    // Pond
+    this.pond = this.physics.add.image(1155, 742, 'pond');
+    this.pond.setImmovable(true);
 
-    // polygon.enableBody();
+    // Background Blockers
+    this.blank_blockers = this.physics.add.staticGroup();
+    let vendingMachineBlocker = this.blank_blockers
+      .create(1533, 920, 'blank_blockers')
+      .setScale(3.18, 1)
+      .refreshBody();
 
-    // polygon.fillColor = '#0xff0000';
+    // Background Items
+    this.signs = this.physics.add.image(673, 571, 'signs');
+    this.signs.setImmovable(true);
 
-    // let graphics = this.add.graphics({ x: 100, y: 200 });
-
-    // graphics.lineStyle(2, 0x00aa00);
-
-    // graphics.beginPath();
-
-    // graphics.moveTo(polygon.points[0].x, polygon.points[0].y);
-
-    // for (var i = 1; i < polygon.points.length; i++) {
-    //   graphics.lineTo(polygon.points[i].x, polygon.points[i].y);
-    // }
-
-    // graphics.closePath();
-    // graphics.strokePath();
+    this.vendingMachine2 = this.physics.add.image(1533, 920, 'vendingMachine2');
+    this.vendingMachine2.setImmovable(true);
 
     // Player
     this.player = this.physics.add.sprite(400, 300, 'revolver-left');
     this.player.setCollideWorldBounds(true);
 
-    // Player collide with polygon
-    this.physics.add.collider(this.player, polygon);
+    this.vendingMachine1 = this.physics.add.image(1533, 920, 'vendingMachine1');
+    this.vendingMachine1.setImmovable(true);
+
+    // Player collide with background items
+    this.physics.add.collider(this.player, this.pond);
+    this.physics.add.collider(this.player, this.blank_blockers);
 
     // // Platforms
     // this.platforms = this.physics.add.staticGroup();
@@ -137,26 +137,35 @@ export default class Level1 extends Phaser.Scene {
   }
 
   update() {
-    // default movement speed = 120
+    // Player movement | default movement speed = 120
+    this.player.setVelocity(0);
+
     if (this.cursors.left.isDown) {
-      this.player.setVelocityX(-600);
+      this.player.setVelocityX(-this.playerSpeed);
 
       this.player.play('left', true);
     } else if (this.cursors.right.isDown) {
-      this.player.setVelocityX(600);
+      this.player.setVelocityX(this.playerSpeed);
 
       this.player.play('right', true);
-    } else if (this.cursors.up.isDown) {
-      this.player.setVelocityY(-600);
+    }
+
+    if (this.cursors.up.isDown) {
+      this.player.setVelocityY(-this.playerSpeed);
 
       this.player.play('up', true);
     } else if (this.cursors.down.isDown) {
-      this.player.setVelocityY(600);
+      this.player.setVelocityY(this.playerSpeed);
 
       this.player.play('down', true);
-    } else {
-      this.player.setVelocityX(0);
-      this.player.setVelocityY(0);
+    }
+
+    if (
+      !this.cursors.left.isDown &&
+      !this.cursors.right.isDown &&
+      !this.cursors.up.isDown &&
+      !this.cursors.down.isDown
+    ) {
       this.player.play('turn');
     }
 
@@ -175,19 +184,19 @@ export default class Level1 extends Phaser.Scene {
   //   if (this.stars.countActive(true) === 0) {
   //     this.scene.start('level-2');
 
-      //   this.stars.children.iterate(function (child) {
-      //     child.enableBody(true, child.x, 0, true, true);
-      //   });
+  //   this.stars.children.iterate(function (child) {
+  //     child.enableBody(true, child.x, 0, true, true);
+  //   });
 
-      //   var x =
-      //     player.x < 400
-      //       ? Phaser.Math.Between(400, 800)
-      //       : Phaser.Math.Between(0, 400);
+  //   var x =
+  //     player.x < 400
+  //       ? Phaser.Math.Between(400, 800)
+  //       : Phaser.Math.Between(0, 400);
 
-      //   var bomb = this.bombs.create(x, 16, 'bomb');
-      //   bomb.setBounce(1);
-      //   bomb.setCollideWorldBounds(true);
-      //   bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
+  //   var bomb = this.bombs.create(x, 16, 'bomb');
+  //   bomb.setBounce(1);
+  //   bomb.setCollideWorldBounds(true);
+  //   bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
   //   }
   // }
 

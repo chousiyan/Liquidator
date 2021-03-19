@@ -1,7 +1,11 @@
 import Preloader from './scenes/preloader.js';
 import Level1 from './scenes/level-1.js';
+import UI from './scenes/UI.js';
 
 const config = {
+  // type: Phaser.AUTO,
+  // width: 800,
+  // height: 600,
   type: Phaser.AUTO,
   scale: {
     mode: Phaser.Scale.FIT,
@@ -14,10 +18,10 @@ const config = {
     default: 'arcade',
     arcade: {
       gravity: { y: 0 },
-      debug: true,
+      debug: false,
     },
   },
-  scene: [Preloader, Level1],
+  scene: [Preloader, Level1, UI],
 };
 
 const game = new Phaser.Game(config);

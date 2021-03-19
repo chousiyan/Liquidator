@@ -5,6 +5,12 @@ export default class Preloader extends Phaser.Scene {
 
   preload() {
     this.load.image('map-background', 'assets/img/map_background.png');
+    this.load.image('pond', 'assets/img/pond.png');
+    this.load.image('lights', 'assets/img/lights.png');
+    this.load.image('signs', 'assets/img/signs.png');
+    this.load.image('blank_blockers', 'assets/img/blank_square.png');
+    this.load.image('vendingMachine1', 'assets/img/vendingMachine1.png');
+    this.load.image('vendingMachine2', 'assets/img/vendingMachine2.png');
 
     // load Player with default revolver image & animation
     this.load.atlas(
@@ -24,5 +30,6 @@ export default class Preloader extends Phaser.Scene {
 
   create() {
     this.scene.start('level-1');
+    this.scene.start('UI');
   }
 }
